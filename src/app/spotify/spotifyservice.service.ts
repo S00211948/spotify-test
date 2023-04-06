@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http'
-import { map, Observable, retry, toArray } from 'rxjs';
+import { from, map, mergeMap, Observable, retry, toArray } from 'rxjs';
 import {Album, IAlbum} from './models/album';
 import { responseParser } from './models/responseParser';
 
@@ -23,16 +23,18 @@ export class SpotifyserviceService
   public getToken()
   {
     //Get a token from spotify when the service is created
+    console.log("Getting Auth Token...")
+    //Setting request headers
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': 'Basic ' + btoa(this.client + ':' + this.secret),
         'Content-Type': 'application/x-www-form-urlencoded'
       })
     };
-    
+    //Setting return parameters
     const authParams = new URLSearchParams();
     authParams.set('grant_type', 'client_credentials');
-    
+    //Sending request
     this.http.post('https://accounts.spotify.com/api/token', authParams.toString(), httpOptions)
       .subscribe((response: any) => {
         this.token = response.access_token.toString();
@@ -44,7 +46,7 @@ export class SpotifyserviceService
     console.log("Token:\n" + this.token)
     const authHeader = {
       headers: new HttpHeaders({
-        'Authorization':  `Bearer BQDrUDeAzTzBQqHvuJczYxlu8-zt6u4ijHOrpKWb2nA_x30sajtFV59HK45p4lkRrj-qfvFvVGTijQ1ea1YrB6wpsgoa-WLqbR0WkSpBxZjGBeQQ3DdF`,
+        'Authorization':  `Bearer ${this.token}`,
         'Content-Type': 'application/json'
       })
     };
@@ -72,9 +74,23 @@ export class SpotifyserviceService
     })*/
   }
 
-  public getAlbums(query: string)
+  public getAlbums(query: string):Observable<Album[]>
   {
-    var response = this.getQuery(query);
+    if(this.token == undefined)
+    {
+      return from
+      (
+        new Promise(resolve => setTimeout(() => resolve(null), 500))
+      ).pipe(
+        mergeMap(() => this.getQuery(query)));
+        /*setTimeout(() => {
+          this.getQuery(query)
+        }, 500);*/
+    }
+    else
+    {
+      return this.getQuery(query)
+    }
   }
 }
 

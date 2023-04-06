@@ -16,11 +16,11 @@ export class AppComponent {
   }
 
   ngOnInit(){
-    this.spotifyService.getQuery("q=Divide&type=album")
+    this.spotifyService.getAlbums("q=Divide&type=album")
     .subscribe({
       next:(value:Album[]) => this.albums = value,
       complete:()=>console.log("Spotify Service Finished"),
-      error:(mess) => this.message = mess
+      error:(mess:string) => this.message = mess
     })
   }
 }
