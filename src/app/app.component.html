@@ -1,6 +1,16 @@
 <h1>Spotify Test App</h1>
 <div class="container">
   <div class="row">
+    <div class="col-6">      
+      <input #search class="form-control" type="text" placeholder="Search albums">
+    </div>
+    <div class="col-4">
+      <button class="btn btn-primary" (click)="searchAlbums(search.value)">Search</button>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
     <div *ngFor="let a of albums" class="col-4">
       <div class="card" style="width: 18rem;">
         <img class="card-img-top" src={{a.coverArt}} alt="Card image cap">

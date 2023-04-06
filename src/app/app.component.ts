@@ -23,4 +23,17 @@ export class AppComponent {
       error:(mess:string) => this.message = mess
     })
   }
+
+  searchAlbums(query:string):boolean
+  {
+    //Call the get albums method with the inputted query
+    console.log("Searching for: "+query);
+    this.spotifyService.getAlbums(`q=${query}&type=album`)
+    .subscribe({
+      next:(value:Album[]) => this.albums = value,
+      complete:()=>console.log("Spotify Service Search Finished"),
+      error:(mess:string) => this.message = mess
+    })
+    return true;
+  }
 }
